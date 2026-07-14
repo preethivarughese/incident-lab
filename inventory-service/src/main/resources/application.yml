@@ -1,0 +1,25 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: inventory-service
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus,info,metrics
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    tags:
+      service: inventory-service
+    export:
+      prometheus:
+        enabled: true
+
+logging:
+  level:
+    com.incidentlab: DEBUG
