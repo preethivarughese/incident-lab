@@ -21,6 +21,10 @@ management:
   endpoint:
     health:
       show-details: always
+  health:
+    status:
+      http-mapping:
+        DOWN: 200
   metrics:
     tags:
       service: order-service
