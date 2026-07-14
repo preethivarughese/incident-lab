@@ -47,3 +47,22 @@ scrape_configs:
       - labels:
           level:
           endpoint:
+
+  # ── Shipping Service logs ───────────────────────────────────
+  - job_name: shipping-service
+    static_configs:
+      - targets: [localhost]
+        labels:
+          service: shipping-service
+          env: local
+          __path__: /logs/shipping/*.log
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+            endpoint: endpoint
+            httpStatus: httpStatus
+            latencyMs: latencyMs
+      - labels:
+          level:
+          endpoint:

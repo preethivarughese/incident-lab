@@ -109,6 +109,8 @@ services:
       - ./monitoring/promtail/promtail-config.yml:/etc/promtail/config.yml:ro
       - ./inventory-service/logs:/logs/inventory:ro
       - ./order-service/logs:/logs/order:ro
+      # Shipping-service lives in a separate repo — mount its logs directory
+      - C:/Users/susanvp/Downloads/shipping-service/logs:/logs/shipping:ro
     command: -config.file=/etc/promtail/config.yml
     depends_on:
       - loki
