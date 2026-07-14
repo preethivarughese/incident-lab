@@ -63,13 +63,13 @@ services:
     restart: unless-stopped
 
   # ──────────────────────────────────────────────
-  # Grafana  →  http://localhost:3001  (admin/admin)
+  # Grafana  →  http://localhost:3000  (admin/admin)
   # ──────────────────────────────────────────────
   grafana:
     image: grafana/grafana:10.4.2
     container_name: grafana
     ports:
-      - "3001:3000"
+      - "3000:3000"
     depends_on:
       - prometheus
     networks:
@@ -83,6 +83,42 @@ services:
       - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
     restart: unless-stopped
 
+  # ──────────────────────────────────────────────
+  # Loki — log aggregation (Prometheus for logs)
+  # ──────────────────────────────────────────────
+  loki:
+    image: grafana/loki:2.9.4
+    container_name: loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./monitoring/loki/loki-config.yml:/etc/loki/local-config.yaml:ro
+      - loki-data:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - incident-lab-net
+    restart: unless-stopped
+
+  # ──────────────────────────────────────────────
+  # Promtail — reads order + inventory log files → Loki
+  # NOTE: shipping-service has its own promtail container that handles
+  # shipping logs. This one handles only incident-lab services.
+  # Named "promtail-lab" to avoid conflict with shipping-service's "promtail"
+  # ──────────────────────────────────────────────
+  promtail-lab:
+    image: grafana/promtail:2.9.4
+    container_name: promtail-lab
+    volumes:
+      - ./monitoring/promtail/promtail-config.yml:/etc/promtail/config.yml:ro
+      - ./inventory-service/logs:/logs/inventory:ro
+      - ./order-service/logs:/logs/order:ro
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+    networks:
+      - incident-lab-net
+    restart: unless-stopped
+
 networks:
   incident-lab-net:
     driver: bridge
@@ -90,3 +126,4 @@ networks:
 volumes:
   prometheus-data:
   grafana-data:
+  loki-data:
