@@ -100,17 +100,18 @@ services:
     restart: unless-stopped
 
   # ──────────────────────────────────────────────
-  # Promtail — reads service log files → Loki
+  # Promtail — reads order + inventory log files → Loki
+  # NOTE: shipping-service has its own promtail container that handles
+  # shipping logs. This one handles only incident-lab services.
+  # Named "promtail-lab" to avoid conflict with shipping-service's "promtail"
   # ──────────────────────────────────────────────
-  promtail:
+  promtail-lab:
     image: grafana/promtail:2.9.4
-    container_name: promtail
+    container_name: promtail-lab
     volumes:
       - ./monitoring/promtail/promtail-config.yml:/etc/promtail/config.yml:ro
       - ./inventory-service/logs:/logs/inventory:ro
       - ./order-service/logs:/logs/order:ro
-      # Shipping-service lives in a separate repo — mount its logs directory
-      - C:/Users/susanvp/Downloads/shipping-service/logs:/logs/shipping:ro
     command: -config.file=/etc/promtail/config.yml
     depends_on:
       - loki
