@@ -61,20 +61,22 @@ const InventoryIncidentPanel: React.FC<Props> = ({ status, loading, onTrigger })
                   p: 1.5,
                   borderRadius: 1,
                   border: '1px solid',
-                  borderColor: isActive ? `${color}.main` : 'divider',
-                  bgcolor: isActive ? `${color}.dark` : 'background.paper',
+                  borderColor: isActive ? 'error.main' : 'divider',
+                  bgcolor: isActive ? 'rgba(239,68,68,0.15)' : 'background.paper',
                   transition: 'all 0.2s ease',
                 }}
               >
-                <Box sx={{ color: isActive ? `${color}.light` : 'text.disabled', flexShrink: 0 }}>
+                <Box sx={{ color: isActive ? 'error.light' : 'text.disabled', flexShrink: 0 }}>
                   {icon}
                 </Box>
                 <Box sx={{ flex: 1, minWidth: 0 }}>
-                  <Typography variant="body2" fontWeight={600}>{label}</Typography>
+                  <Typography variant="body2" fontWeight={600} color={isActive ? 'error.light' : 'text.primary'}>
+                    {label}
+                  </Typography>
                   <Typography variant="caption" color="text.secondary">{description}</Typography>
                 </Box>
                 {isActive ? (
-                  <Chip label="ACTIVE" size="small" color={color as 'warning' | 'error'} />
+                  <Chip label="ACTIVE" size="small" color="error" variant="filled" />
                 ) : (
                   <Button
                     variant="outlined"
